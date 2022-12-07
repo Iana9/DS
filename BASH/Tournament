@@ -1,0 +1,67 @@
+#!/bin/bash
+
+# Based on an input file containing which team played against which and
+# what the outcome was, create a file with a table like this:
+
+# Team                           | MP |  W |  D |  L |  P
+# Devastating Donkeys            |  3 |  2 |  1 |  0 |  7
+# Allegoric Alaskans             |  3 |  2 |  0 |  1 |  6
+# Blithering Badgers             |  3 |  1 |  0 |  2 |  3
+# Courageous Californians        |  3 |  0 |  1 |  2 |  1
+
+# What do those abbreviations mean?
+
+#     MP: Matches Played
+#     W: Matches Won
+#     D: Matches Drawn (Tied)
+#     L: Matches Lost
+#     P: Points
+
+# A win earns a team 3 points. A draw earns 1. A loss earns 0.
+
+read_file () {
+  while IFS=';' read -r team1 team2 result_of_match; do
+    if [[ "$result_of_match" =~ win ]]; then
+      command_result["$team1", win]=$((${command_result["$team1", win]} + 1))
+      command_result["$team2", loss]=$((${command_result["$team2", loss]} + 1))
+    elif [[ "$result_of_match" =~ loss ]]; then
+      command_result["$team1", loss]=$((${command_result["$team1", loss]} + 1))
+      command_result["$team2", win]=$((${command_result["$team2", win]} + 1))
+    elif [[ "$result_of_match" =~ draw ]]; then
+      command_result["$team1", draw]=$((${command_result["$team1", draw]} + 1))
+      command_result["$team2", draw]=$((${command_result["$team2", draw]} + 1))
+    fi
+  done < "$1"
+}
+
+create_table () {
+  printf '%-30s|%3s |%3s  |%3s  |%3s  |%3s\n' "Team" "MP" "W" "D" "L" "P"
+  while read -r i;do
+    local matches_played=0
+    local matches_won=0
+    local matches_lost=0
+    local matches_draw=0
+    for j in win loss draw; do
+      if [[ -n "${command_result[$(echo "$i" | tr -d '\n'), $j]}" ]]; then # get a lines of strings which needed deletion of \n for getting a right key for the array
+        if [[ "$j" == win ]];then
+          matches_won=$(($matches_won + ${command_result[$(echo "$i" | tr -d '\n'), $j]}))
+        elif [[ "$j" == loss ]];then
+          matches_lost=$(($matches_lost + ${command_result[$(echo "$i" | tr -d '\n'), $j]}))
+        elif [[ "$j" == draw ]];then
+          matches_draw=$(($matches_draw + ${command_result[$(echo "$i" | tr -d '\n'), $j]}))
+        fi
+        matches_played=$(($matches_played + ${command_result[$(echo "$i" | tr -d '\n'), $j]}))
+      fi
+    done
+    printf '%-30s|%3d |%3d  |%3d  |%3d  |%3d\n'  "$i" $matches_played $matches_won $matches_draw $matches_lost $(($matches_won * 3 + $matches_draw * 1))
+  done < <(echo "$TEAMS")
+}
+
+main () {
+  declare -A command_result
+  read_file "$@"
+  TEAMS=$(printf "%s\n" "${!command_result[@]}" | sed -r "s/, (win|loss|draw)//g" | sort -u) # create lines of teams
+  create_table
+}
+
+main "$@"

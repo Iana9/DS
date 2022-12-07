@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+# Convert a phrase to its acronym.
+# Techies love their TLA (Three Letter Acronyms)!
+
+read -p "Enter a phrase for Acronym: > "
+
+printf "%b" $(echo $REPLY | tr -s ' -' '\n' | cut -c 1) "\n" | tr '[:lower:]' '[:upper:]'
+exit 0

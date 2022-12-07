@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+
+#Letter                           Value
+#A, E, I, O, U, L, N, R, S, T       1
+#D, G                               2
+#B, C, M, P                         3
+#F, H, V, W, Y                      4
+#K                                  5
+#J, X                               8
+#Q, Z                               10
+
+read -p "Enter a word to get a score: "
+
+WORD=$(echo "$REPLY" | tr '[:upper:]' '[:lower:]')
+score=
+
+if [[ -z "$WORD" ]] || (( ${#WORD} == 1 )); then
+  echo 'Not a word'
+  exit
+fi
+
+if [[ "$WORD" =~ ^[[:alpha:]]*[aeioulnrst]+[[:alpha:]]*$ ]]; then
+  score=$(( score + ${#WORD} - $(echo "$WORD" | tr -d 'aeioulnrst' | fold -w1 | wc -l) ))
+fi
+
+if [[ "$WORD" =~ ^[[:alpha:]]*[dg]+[[:alpha:]]*$ ]]; then
+  score=$(( score + ((${#WORD} - $(echo "$WORD" | tr -d 'dg' | fold -w1 | wc -l))) * 2 ))
+fi
+
+if [[ "$WORD" =~ ^[[:alpha:]]*[bcmp]+[[:alpha:]]*$ ]]; then
+  score=$(( score + ((${#WORD} - $(echo "$WORD" | tr -d 'bcmp' | fold -w1 | wc -l))) * 3 ))
+fi
+
+if [[ "$WORD" =~ ^[[:alpha:]]*[fhvwy]+[[:alpha:]]*$ ]]; then
+  score=$(( score + ((${#WORD} - $(echo "$WORD" | tr -d 'fhvwy' | fold -w1 | wc -l))) * 4 ))
+fi
+
+if [[ "$WORD" =~ ^[[:alpha:]]*[k]+[[:alpha:]]*$ ]]; then
+  score=$(( score + ((${#WORD} - $(echo "$WORD" | tr -d 'k' | fold -w1 | wc -l))) * 5 ))
+fi
+
+if [[ "$WORD" =~ ^[[:alpha:]]*[jx]+[[:alpha:]]*$ ]]; then
+  score=$(( score + ((${#WORD} - $(echo "$WORD" | tr -d 'jx' | fold -w1 | wc -l))) * 8 ))
+fi
+
+if [[ "$WORD" =~ ^[[:alpha:]]*[qz]+[[:alpha:]]*$ ]]; then
+  score=$(( score + ((${#WORD} - $(echo "$WORD" | tr -d 'qz' | fold -w1 | wc -l))) * 10 ))
+fi
+
+echo $score
+exit 0

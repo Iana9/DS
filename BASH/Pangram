@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+read -p "Enter text: > "
+
+if (( $(echo $REPLY | tr -s '[:upper:]' '[:lower:]' | tr -d '!., ' | fold -w1 | sort -u | wc -l) == 26 )); then
+  echo "The sentence is a pangram"
+else
+  echo "The sentence is not a pangram"
+fi
+
+exit 0

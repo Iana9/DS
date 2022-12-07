@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+# The Atbash cipher is a simple substitution cipher that relies on transposing
+# all the letters in the alphabet such that the resulting alphabet is backwards.
+# The first letter is replaced with the last letter, the second with
+# the second-last, and so on.
+
+read -p "Enter word for encription: "
+
+REPLY="$(echo "$REPLY" | tr '[A-Z]' '[a-z]')"
+ALPHABET=$(echo {a..z} | tr -d ' ')
+
+for (( j=1; j<=${#REPLY}; j++ )); do
+  for (( i=0; i<${#ALPHABET}; i++ )); do
+    if [[ ${ALPHABET:$i:1} == ${REPLY:$((j - 1)):1} ]]; then
+      REPLY=${REPLY::$((j - 1))}${ALPHABET:$((0 - ((i + 1)))):1}${REPLY:$j}
+      break
+    fi
+  done
+done
+
+echo $REPLY
+exit 0

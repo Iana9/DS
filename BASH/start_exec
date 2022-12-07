@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+PROGNAME=$(basename $0)
+EXECUTABLE_FILE=$(basename $1)
+
+while [[ true ]]; do
+  clear
+  cat <<- _EOF_
+          1. Execute $EXECUTABLE_FILE
+          2. Read $EXECUTABLE_FILE
+          0. Quit $PROGNAME
+_EOF_
+  read -p "Enter [0-2]: > "
+  case $REPLY in
+    0 ) echo "$PROGNAME terminated."
+        exit 0
+      ;;
+    1 ) echo "$EXECUTABLE_FILE start of execution:"
+        ./${1}
+        exit 0
+      ;;
+    2 ) echo "$EXECUTABLE_FILE start of reading:"
+        cat $1
+        echo "$EXECUTABLE_FILE end of reading"
+        exit 0
+      ;;
+    * ) echo "Invalid input? Try again."
+        continue
+      ;;
+  esac
+done

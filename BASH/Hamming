@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+# The Hamming distance is only defined for sequences of equal length,
+# so an attempt to calculate it between sequences of different lengths should not work.
+
+read -p "Enter first DNA: > " DNA1
+read -p "Enter second DNA: > " DNA2
+
+if (( ${#DNA1} == ${#DNA2} )) && [[ "$DNA1" =~ ^[CAGT]+$ ]] && [[ "$DNA2" =~ ^[CAGT]+$  ]]; then
+
+  diff=
+
+  for (( i=0; i<${#DNA1}; i++ )); do
+    if [[ ${DNA1:$i:1} != ${DNA2:$i:1} ]]; then
+      diff=$((diff+1))
+    fi
+  done
+
+  echo $diff
+  exit 0
+
+else
+  exit 0
+fi

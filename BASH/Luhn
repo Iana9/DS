@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+# Given a number determine whether or not it is valid per the Luhn formula.
+
+# Strings of length 1 or less are not valid.
+# Spaces are allowed in the input, but they should be stripped before checking.
+# All other non-digit characters are disallowed.
+
+read -p "Input a string of numbers: "
+
+accum_sum=
+
+if (( ${#REPLY} <= 1 )) || [[ "$REPLY" =~ [[:alpha:]]+ ]]; then
+  echo "Invalid input"
+  exit 1
+fi
+
+REPLY=$(echo $REPLY | tr -d ' ')
+
+for (( i=0; i<${#REPLY}; i++ )); do
+  if (( $i % 2 == 0 )); then
+    if (( ${REPLY:$i:1} * 2 > 9 )); then
+     REPLY=${REPLY:0:$i}$((${REPLY:$i:1} * 2 - 9))${REPLY:(($i + 1))}
+    else
+     REPLY=${REPLY:0:$i}$((${REPLY:$i:1} * 2))${REPLY:(($i + 1))}
+   fi
+  fi
+  accum_sum=$((accum_sum + ${REPLY:$i:1}))
+done
+
+if (( $accum_sum % 10 == 0 )); then
+  echo "The number is valid"
+fi
+
+exit 0

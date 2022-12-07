@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+# conversetion with Bob
+
+while [[ true ]]; do
+  read -p "Do you have a question to Bob? Enter 'q' if not. > "
+  if [[ "$REPLY" == "q" ]] || [[ "$REPLY" == "Q" ]]; then
+    echo "Bob's saying goodby"
+    exit 0
+  elif [[ $(echo "$REPLY" | tr -s '[A-Z]' '[a-z]') == "how are you" ]]; then
+    echo "Sure"
+  elif [[ "$REPLY" =~ ^[[:upper:][:space:]]+$ ]]; then
+    echo "Whoa, chill out"
+  elif [[ "$REPLY" =~ ^[[:upper:][:space:]]*\?$ ]]; then
+    echo "Calm down, I know what I'm doing!"
+  elif [[ -z "$REPLY" ]]; then
+    echo "Fine. Be that way!"
+  else
+    echo "Whatever."
+  fi
+done
